@@ -380,7 +380,7 @@ void SleighBuilder::delaySlot(OpTpl *op)
   do {
     Address newaddr = baseaddr + fallOffset;
     setUniqueOffset(newaddr);
-    const ParserContext *pos = discache->getParserContext(newaddr);
+    ParserContext *pos = discache->getParserContext(newaddr);
     if (pos->getParserState() != ParserContext::pcode)
       throw LowlevelError("Could not obtain cached delay slot instruction");
     int4 len = pos->getLength();
@@ -420,7 +420,7 @@ void SleighBuilder::appendCrossBuild(OpTpl *bld,int4 secnum)
 
   Address newaddr(spc,addr);
   setUniqueOffset(newaddr);
-  const ParserContext *pos = discache->getParserContext( newaddr );
+  ParserContext *pos = discache->getParserContext( newaddr );
   if (pos->getParserState() != ParserContext::pcode)
     throw LowlevelError("Could not obtain cached crossbuild instruction");
   

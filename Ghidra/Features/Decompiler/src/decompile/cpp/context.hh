@@ -78,7 +78,7 @@ public:
     pcode = 2			// Instruction is parsed in preparation for generating p-code
   };
 private:
-  Translate *translate;		// Instruction parser
+  const Translate *translate;		// Instruction parser
   int4 parsestate;
   AddrSpace *const_space;
   uint1 buf[16];		// Buffer of bytes in the instruction stream
@@ -94,8 +94,9 @@ private:
   ConstructState *base_state;
   int4 alloc;			// Number of ConstructState's allocated
   int4 delayslot;		// delayslot depth
+  int4 get_last_byte;  // offset of last byte read from buf
 public:
-  ParserContext(ContextCache *ccache,Translate *trans);
+  ParserContext(ContextCache *ccache,const Translate *trans);
   ~ParserContext(void) { if (context != (uintm *)0) delete [] context; }
   uint1 *getBuffer(void) { return buf; }
   void initialize(int4 maxstate,int4 maxparam,AddrSpace *spc);
@@ -118,26 +119,28 @@ public:
   AddrSpace *getConstSpace(void) const { return const_space; }
   uintm getInstructionBytes(int4 byteoff,int4 numbytes,uint4 off) const;
   uintm getContextBytes(int4 byteoff,int4 numbytes) const;
-  uintm getInstructionBits(int4 startbit,int4 size,uint4 off) const;
+  uintm getInstructionBits(int4 startbit,int4 size,uint4 off);
   uintm getContextBits(int4 startbit,int4 size) const;
   void setContextWord(int4 i,uintm val,uintm mask) { context[i] = (context[i]&(~mask))|(mask&val); }
   void loadContext(void) { contcache->getContext(addr,context); }
   int4 getLength(void) const { return base_state->length; }
   void setDelaySlot(int4 val) { delayslot = val; }
   int4 getDelaySlot(void) const { return delayslot; }
+  int4 getLastByte(void) const { return get_last_byte; }
+  void setLastByte(int4 val) { if (val > get_last_byte) get_last_byte = val; }
 };
   
 class ParserWalker {		// A class for walking the ParserContext
-  const ParserContext *const_context;
+  ParserContext *const_context;
   const ParserContext *cross_context;
 protected:
   ConstructState *point;	// The current node being visited
   int4 depth;			// Depth of the current node
   int4 breadcrumb[32];	// Path of operands from root
 public:
-  ParserWalker(const ParserContext *c) { const_context = c; cross_context = (const ParserContext *)0; }
-  ParserWalker(const ParserContext *c,const ParserContext *cross) { const_context = c; cross_context = cross; }
-  const ParserContext *getParserContext(void) const { return const_context; }
+  ParserWalker(ParserContext *c) { const_context = c; cross_context = (const ParserContext *)0; }
+  ParserWalker(ParserContext *c,const ParserContext *cross) { const_context = c; cross_context = cross; }
+  ParserContext *getParserContext(void) const { return const_context; }
   void baseState(void) { point = const_context->base_state; depth=0; breadcrumb[0] = 0; }
   void setOutOfBandState(Constructor *ct,int4 index,ConstructState *tempstate,const ParserWalker &otherwalker);
   bool isState(void) const { return (point != (ConstructState *)0); }
@@ -165,6 +168,7 @@ public:
     return const_context->getInstructionBits(startbit,size,point->offset); }
   uintm getContextBits(int4 startbit,int4 size) const {
     return const_context->getContextBits(startbit,size); }
+  uint4 getPointOffset(void) const { return point->offset; }
 };
 
 class ParserWalkerChange : public ParserWalker { // Extension to walker that allows for on the fly modifications to tree

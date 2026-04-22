@@ -467,6 +467,15 @@ bool PatternBlock::isInstructionMatch(ParserWalker &walker) const
   if (nonzerosize<=0) return (nonzerosize==0);
   int4 off = offset;
   for(int4 i=0;i<maskvec.size();++i) {
+    int4 lastbyte = off;
+    uintm mask = maskvec[i];
+    while(mask != 0) {
+      lastbyte += 1;
+      mask <<= 8;  // leftmost = first byte, shift "away" to the left
+    }
+    lastbyte += walker.getPointOffset();
+    walker.getParserContext()->setLastByte(lastbyte);
+
     uintm data = walker.getInstructionBytes(off,sizeof(uintm));
     if ((maskvec[i] & data)!=valvec[i]) return false;
     off += sizeof(uintm);

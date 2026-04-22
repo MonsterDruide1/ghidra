@@ -19,7 +19,7 @@
 
 namespace ghidra {
 
-ParserContext::ParserContext(ContextCache *ccache,Translate *trans)
+ParserContext::ParserContext(ContextCache *ccache,const Translate *trans)
 
 {
   parsestate = uninitialized;
@@ -33,6 +33,7 @@ ParserContext::ParserContext(ContextCache *ccache,Translate *trans)
     contextsize = 0;
     context = (uintm *)0;
   }
+  get_last_byte = -1;
 }
 
 void ParserContext::initialize(int4 maxstate,int4 maxparam,AddrSpace *spc)
@@ -74,7 +75,7 @@ uintm ParserContext::getInstructionBytes(int4 bytestart,int4 size,uint4 off) con
   return res;
 }
 
-uintm ParserContext::getInstructionBits(int4 startbit,int4 size,uint4 off) const
+uintm ParserContext::getInstructionBits(int4 startbit,int4 size,uint4 off)
 
 {
   off += (startbit/8);
@@ -90,6 +91,9 @@ uintm ParserContext::getInstructionBits(int4 startbit,int4 size,uint4 off) const
   }
   res <<= 8*(sizeof(uintm)-bytesize)+startbit; // Move starting bit to highest position
   res >>= 8*sizeof(uintm)-size;	// Shift to bottom of intm
+  int4 last_byte = off + bytesize;
+  if (last_byte > get_last_byte)
+    get_last_byte = last_byte;
   return res;
 }
 
