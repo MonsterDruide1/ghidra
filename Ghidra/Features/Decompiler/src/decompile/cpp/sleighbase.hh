@@ -60,7 +60,7 @@ private:
 class SleighBase : public Translate {
   vector<string> userop;		///< Names of user-define p-code ops for \b this Translate object
   map<VarnodeData,string> varnode_xref;	///< A map from Varnodes in the \e register space to register names
-protected:
+public:
   SubtableSymbol *root;		///< The root SLEIGH decoding symbol
   SymbolTable symtab;		///< The SLEIGH symbol table
   uint4 maxdelayslotbytes;	///< Maximum number of bytes in a delay-slot directive
