@@ -128,6 +128,7 @@ public:
   int4 getDelaySlot(void) const { return delayslot; }
   int4 getLastByte(void) const { return get_last_byte; }
   void setLastByte(int4 val) { if (val > get_last_byte) get_last_byte = val; }
+  Constructor* getBaseConstructor(void) const { return base_state->ct; }
 };
   
 class ParserWalker {		// A class for walking the ParserContext
