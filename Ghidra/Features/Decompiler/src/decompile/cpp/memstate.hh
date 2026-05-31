@@ -110,6 +110,7 @@ public:
 /// of this page implementation.  The underlying memory bank can be a \b null pointer
 /// in which case, this memory bank behaves as if it were initially filled with zeros.
 class MemoryPageOverlay : public MemoryBank {
+public:
   MemoryBank *underlie;		///< Underlying memory object
   map<uintb,uint1 *> page;	///< Overlayed pages
 protected:
