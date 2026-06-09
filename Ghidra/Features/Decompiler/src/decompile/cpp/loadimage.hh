@@ -87,6 +87,7 @@ public:
   virtual void getReadonly(RangeList &list) const; ///< Return list of \e readonly address ranges
   virtual string getArchType(void) const=0; ///< Get a string indicating the architecture type
   virtual void adjustVma(long adjust)=0; ///< Adjust load addresses with a global offset
+  virtual void loadInstrData(uint1 *ptr,int4 size,const Address &addr) { loadFill(ptr,size,addr); } ///< Load instruction data, default to loadFill
   uint1 *load(int4 size,const Address &addr);	///< Load a chunk of image
 };
 

@@ -609,7 +609,7 @@ ParserContext *Sleigh::obtainContext(const Address &addr,int4 state) const
 void Sleigh::resolve(ParserContext &pos) const
 
 {
-  loader->loadFill(pos.getBuffer(),16,pos.getAddr());
+  loader->loadInstrData(pos.getBuffer(),16,pos.getAddr());
   ParserWalkerChange walker(&pos);
   pos.deallocateState(walker);	// Clear the previous resolve and initialize the walker
   Constructor *ct,*subct;
