@@ -296,6 +296,7 @@ public:
 /// as the execution address is set, either explicitly, or via branches and fallthrus.  There
 /// are additional methods for inspecting the pcode ops in the current instruction as a sequence.
 class EmulatePcodeCache : public EmulateMemory {
+public:
   Translate *trans;		///< The SLEIGH translator
   vector<PcodeOpRaw *> opcache;	///< The cache of current p-code ops
   vector<VarnodeData *> varcache;	///< The cache of current varnodes
