@@ -94,7 +94,7 @@ inline AddrSpace *MemoryBank::getSpace(void) const
 /// This bank cannot be written to.
 class MemoryImage : public MemoryBank {
   LoadImage *loader;		///< The underlying LoadImage
-protected:
+public:
   virtual void insert(uintb addr,uintb val) {
     throw LowlevelError("Writing to read-only MemoryBank"); } ///< Exception is thrown for write attempts
   virtual uintb find(uintb addr) const;	///< Overridden find method
