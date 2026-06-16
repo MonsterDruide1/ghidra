@@ -495,6 +495,15 @@ DisassemblyCache::DisassemblyCache(Translate *trans,ContextCache *ccache,AddrSpa
 ParserContext *DisassemblyCache::getParserContext(const Address &addr)
 
 {
+  if (disable) {
+    ParserContext *res = list[ nextfree ];
+    nextfree += 1;		// Advance the circular index
+    if (nextfree >= minimumreuse)
+      nextfree = 0;
+    res->setAddr(addr);
+    res->setParserState(ParserContext::uninitialized);	// Need to start over with parsing
+    return res;
+  }
   int4 hashindex = ((int4) addr.getOffset()) & mask;
   ParserContext *res = hashtable[ hashindex ];
   if (res->getAddr() == addr)

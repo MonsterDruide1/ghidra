@@ -115,10 +115,12 @@ class DisassemblyCache {
   ParserContext **hashtable;	///< Hashtable for looking up ParserContext via Address
   void initialize(int4 min,int4 hashsize);	///< Initialize the hash-table of ParserContexts
   void free(void);		///< Free the hash-table of ParserContexts
+  bool disable = false;
 public:
   DisassemblyCache(Translate *trans,ContextCache *ccache,AddrSpace *cspace,int4 cachesize,int4 windowsize);	///< Constructor
   ~DisassemblyCache(void) { free(); }	///< Destructor
   ParserContext *getParserContext(const Address &addr);		///< Get the parser for a particular Address
+  void setDisable(bool val) { disable = val; }
 };
 
 /// \brief Build p-code from a pre-parsed instruction
@@ -160,6 +162,7 @@ public:
 /// P-code is produced via the oneInstruction() method, provided with a PcodeEmit
 /// object and an Address.
 class Sleigh : public SleighBase {
+public:
   LoadImage *loader;			///< The mapped bytes in the program
   ContextDatabase *context_db;		///< Database of context values steering disassembly
   ContextCache *cache;			///< Cache of recently used context values
