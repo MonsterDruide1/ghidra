@@ -306,6 +306,7 @@ public:
   bool instruction_start;	///< \b true if next pcode op is start of instruction
   int4 current_op;		///< Index of current pcode op within machine instruction
   int4 instruction_length;	///< Length of current instruction in bytes
+  bool autopull_next_instr = true;
   void clearCache(void);	///< Clear the p-code cache
   void createInstruction(const Address &addr); ///< Cache pcode for instruction at given address
   void establishOp(void);

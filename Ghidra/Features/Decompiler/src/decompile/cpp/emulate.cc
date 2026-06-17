@@ -394,8 +394,13 @@ void EmulatePcodeCache::fallthruOp(void)
   instruction_start = false;
   current_op += 1;
   if (current_op >= opcache.size()) {
-    current_address = current_address + instruction_length;
-    createInstruction(current_address);
+    if (autopull_next_instr) {
+      current_address = current_address + instruction_length;
+      createInstruction(current_address);
+    }
+    else {
+      instruction_start = true;  // to exit `executeInstruction()` loop
+    }
   }
   establishOp();
 }
