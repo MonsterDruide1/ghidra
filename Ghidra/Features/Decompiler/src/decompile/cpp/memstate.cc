@@ -182,64 +182,7 @@ void MemoryBank::setPage(uintb addr,const uint1 *val,int4 skip,int4 size)
 void MemoryBank::setValue(uintb offset,int4 size,uintb val)
 
 {
-  uintb alignmask = (uintb)(wordsize-1);
-  uintb ind = offset & (~alignmask);
-  int4 skip = offset & alignmask;
-  int4 size1 = wordsize-skip;
-  int4 size2;
-  int4 gap;
-  uintb val1,val2;
-
-  if (size > size1) {		// We have spill over
-    size2 = size - size1;
-    val1 = find(ind);
-    val2 = find(ind+wordsize);
-    gap = wordsize - size2;
-  }
-  else {
-    if (size == wordsize) {
-      insert(ind,val);
-      return;
-    }
-    val1 = find(ind);
-    val2 = 0;
-    gap = size1-size;
-    size1 = size;
-    size2 = 0;
-  }
-
-  skip = skip * 8;		// Convert from byte skip to bit skip
-  gap = gap * 8;		// Convert from byte to bits
-  if (space->isBigEndian()) {
-    if (size2 == 0) {
-      val1 &= ~(calc_mask(size1)<<gap);
-      val1 |= val << gap;
-      insert(ind,val1);
-    }
-    else {
-      val1 &= (~((uintb)0)) << 8*size1;
-      val1 |= val >> 8*size2;
-      insert(ind,val1);
-      val2 &= (~((uintb)0)) >> 8*size2;
-      val2 |= val << gap;
-      insert(ind+wordsize,val2);
-    }
-  }
-  else {
-    if (size2 == 0) {
-      val1 &= ~(calc_mask(size1)<<skip);
-      val1 |= val << skip;
-      insert(ind,val1);
-    }
-    else {
-      val1 &= (~((uintb)0)) >> 8*size1;
-      val1 |= val << skip;
-      insert(ind,val1);
-      val2 &= (~((uintb)0)) << 8*size2;
-      val2 |= val >> 8*size1;
-      insert(ind+wordsize,val2);
-    }
-  }
+  setChunk(offset, size, (const uint1 *)&val);
 }
 
 /// This routine gets the value from a range of bytes at an arbitrary address.
@@ -253,42 +196,7 @@ uintb MemoryBank::getValue(uintb offset,int4 size) const
 
 {
   uintb res;
- 
-  uintb alignmask = (uintb) (wordsize-1);
-  uintb ind = offset & (~alignmask);
-  int4 skip = offset & alignmask;
-  int4 size1 = wordsize-skip;
-  int4 size2;
-  int4 gap;
-  uintb val1,val2;
-  if (size > size1) {		// We have spill over
-    size2 = size - size1;
-    val1 = find(ind);
-    val2 = find(ind+wordsize);
-    gap = wordsize - size2;
-  }
-  else {
-    val1 = find(ind);
-    val2 = 0;
-    if (size == wordsize)
-      return val1;
-    gap = size1-size;
-    size1 = size;
-    size2 = 0;
-  }
-
-  if (space->isBigEndian()) {
-    if (size2 == 0)
-      res = val1>>(8*gap);
-    else
-      res = (val1<<(8*size2)) | (val2 >> (8*gap));
-  }
-  else {
-    if (size2 == 0)
-      res = val1 >> (skip*8);
-    else
-      res = (val1>>(skip*8)) | (val2<<(size1*8) );
-  }
+  getChunk(offset, size, (uint1 *)&res);
   res &= (uintb)calc_mask(size);
   return res;
 }
