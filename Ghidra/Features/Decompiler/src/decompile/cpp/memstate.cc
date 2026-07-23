@@ -114,7 +114,7 @@ void MemoryBank::getPage(uintb addr,uint1 *res,int4 skip,int4 size) const
       ptr += (addr-startalign);
       sz = wordsize - (addr-startalign);
     }
-    if (startalign + wordsize > endaddr)
+    if (startalign > endaddr - wordsize)
       sz -= (startalign + wordsize -endaddr);
     memcpy(res,ptr,sz);
     res += sz;
