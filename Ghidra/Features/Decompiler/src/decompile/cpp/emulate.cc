@@ -394,8 +394,8 @@ void EmulatePcodeCache::fallthruOp(void)
   instruction_start = false;
   current_op += 1;
   if (current_op >= opcache.size()) {
+    current_address = current_address + instruction_length;
     if (autopull_next_instr) {
-      current_address = current_address + instruction_length;
       createInstruction(current_address);
     }
     else {
@@ -443,7 +443,12 @@ void EmulatePcodeCache::setExecuteAddress(const Address &addr)
 {
   current_address = addr;	// Copy -addr- BEFORE calling createInstruction
                                 // as it calls clear and may delete -addr-
-  createInstruction(current_address);
+  if (autopull_next_instr) {
+    createInstruction(current_address);
+  }
+  else {
+    instruction_start = true;  // to exit `executeInstruction()` loop
+  }
   establishOp();
 }
 
