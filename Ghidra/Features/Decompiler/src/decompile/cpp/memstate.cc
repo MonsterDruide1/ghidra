@@ -154,7 +154,7 @@ void MemoryBank::setPage(uintb addr,const uint1 *val,int4 skip,int4 size)
       ptr += (addr-startalign);
       sz = wordsize - (addr-startalign);
     }
-    if (startalign + wordsize > endaddr)
+    if (startalign > endaddr - wordsize)
       sz -= (startalign + wordsize - endaddr);
     if (sz != wordsize) {
       curval = find(startalign); // Part of word is copied from underlying
