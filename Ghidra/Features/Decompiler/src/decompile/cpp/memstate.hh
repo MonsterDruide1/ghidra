@@ -192,9 +192,6 @@ inline Translate *MemoryState::getTranslate(void) const
 inline void MemoryState::setValue(const VarnodeData *vn,uintb cval)
 
 {
-  if (vn->size > sizeof(uintb)) {
-    throw LowlevelError("Varnode size too large for setValue");
-  }
   setValue(vn->space,vn->offset,vn->size,cval);
 }
 
@@ -205,9 +202,6 @@ inline void MemoryState::setValue(const VarnodeData *vn,uintb cval)
 inline uintb MemoryState::getValue(const VarnodeData *vn) const
 
 {
-  if (vn->size > sizeof(uintb)) {
-    throw LowlevelError("Varnode size too large for getValue");
-  }
   return getValue(vn->space,vn->offset,vn->size);
 }
 

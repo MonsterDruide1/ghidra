@@ -182,6 +182,9 @@ void MemoryBank::setPage(uintb addr,const uint1 *val,int4 skip,int4 size)
 void MemoryBank::setValue(uintb offset,int4 size,uintb val)
 
 {
+  if (size > sizeof(uintb)) {
+    throw LowlevelError("Varnode size too large for setValue");
+  }
   setChunk(offset, size, (const uint1 *)&val);
 }
 
@@ -195,6 +198,9 @@ void MemoryBank::setValue(uintb offset,int4 size,uintb val)
 uintb MemoryBank::getValue(uintb offset,int4 size) const
 
 {
+  if (size > sizeof(uintb)) {
+    throw LowlevelError("Varnode size too large for getValue");
+  }
   uintb res;
   getChunk(offset, size, (uint1 *)&res);
   res &= (uintb)calc_mask(size);
