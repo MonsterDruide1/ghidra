@@ -110,9 +110,9 @@ void MemoryBank::getPage(uintb addr,uint1 *res,int4 skip,int4 size) const
       curval = byte_swap(curval,wordsize);
     ptr = (uint1 *)&curval;
     int4 sz = wordsize;
-    if (startalign < addr) {
-      ptr += (addr-startalign);
-      sz = wordsize - (addr-startalign);
+    if (startalign < ptraddr) {
+      ptr += (ptraddr-startalign);
+      sz = wordsize - (ptraddr-startalign);
     }
     if (startalign > endaddr - wordsize)
       sz -= (startalign + wordsize -endaddr);
@@ -150,9 +150,9 @@ void MemoryBank::setPage(uintb addr,const uint1 *val,int4 skip,int4 size)
   do {
     ptr = (uint1 *)&curval;
     int4 sz = wordsize;
-    if (startalign < addr) {
-      ptr += (addr-startalign);
-      sz = wordsize - (addr-startalign);
+    if (startalign < ptraddr) {
+      ptr += (ptraddr-startalign);
+      sz = wordsize - (ptraddr-startalign);
     }
     if (startalign > endaddr - wordsize)
       sz -= (startalign + wordsize - endaddr);
